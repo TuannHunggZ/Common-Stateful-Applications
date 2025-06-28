@@ -1,0 +1,43 @@
+services:
+  mongo1:
+    image: mongo
+    container_name: mongo1
+    ports:
+      - "27018:27017"
+    command: ["mongod", "--replSet", "myReplicaSet", "--bind_ip", "0.0.0.0"]
+    networks:
+      - mongoCluster
+
+  mongo2:
+    image: mongo
+    container_name: mongo2
+    ports:
+      - "27019:27017"
+    command: ["mongod", "--replSet", "myReplicaSet", "--bind_ip", "0.0.0.0"]
+    networks:
+      - mongoCluster
+
+  mongo3:
+    image: mongo
+    container_name: mongo3
+    ports:
+      - "27010:27017"
+    command: ["mongod", "--replSet", "myReplicaSet", "--bind_ip", "0.0.0.0"]
+    networks:
+      - mongoCluster
+
+  mongo-init:
+    image: mongo
+    depends_on:
+      - mongo1
+      - mongo2
+      - mongo3
+    volumes:
+      - ./init-replica.js:/init-replica.js
+    entrypoint: ["sh", "-c", "sleep 5 && mongosh --host mongo1 --file /init-replica.js"]
+    networks:
+      - mongoCluster
+
+networks:
+  mongoCluster:
+    driver: bridge

@@ -1,0 +1,41 @@
+services:
+  master:
+    build:
+      context: ./master
+      dockerfile: Dockerfile
+    container_name: mysql-master
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+    volumes:
+      - master-data:/var/lib/mysql
+      - ./init/master-init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "3307:3306"
+    networks:
+      - mysql-net
+
+  slave:
+    build:
+      context: ./slave
+      dockerfile: Dockerfile
+    container_name: mysql-slave
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+    volumes:
+      - slave-data:/var/lib/mysql
+    ports:
+      - "3308:3306"
+    depends_on:
+      - master
+    networks:
+      - mysql-net
+
+networks:
+  mysql-net:
+    driver: bridge
+
+volumes:
+  master-data:
+  slave-data:
