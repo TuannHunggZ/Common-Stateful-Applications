@@ -1,7 +1,7 @@
 # 1. Mongodb: replica set
 ```bash
-git clone
-cd Mongodb
+git clone https://github.com/TuannHunggZ/Common-Stateful-Applications.git
+cd Common-Stateful-Applications/Mongodb
 docker compose up -d
 ```
 Access the mongo1 container:
@@ -14,8 +14,8 @@ rs.status()
 ```
 # 2. Mysql: master and slave
 ```bash
-git clone
-cd Mysql
+git clone https://github.com/TuannHunggZ/Common-Stateful-Applications.git
+cd Common-Stateful-Applications/Mysql
 docker compose up -d
 ```
 ## Configure master
