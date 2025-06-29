@@ -52,3 +52,20 @@ Verify the replication status:
 ```bash
 SHOW REPLICA STATUS\G
 ```
+
+# 3. Redis: master and slave
+Clone the repository and navigate to the Redis master-slave directory:
+```bash
+git clone https://github.com/TuannHunggZ/Common-Stateful-Applications.git
+cd Common-Stateful-Applications/Redis/Master-Slave
+docker compose up -d
+```
+Verify Redis Master and Slave Working
+- Access the Redis CLI inside a slave container:
+```bash
+docker exec -it redis-slave1 redis-cli
+```
+- Check replication status:
+```bash
+info replication
+```
