@@ -69,3 +69,29 @@ docker exec -it redis-slave1 redis-cli
 ```bash
 info replication
 ```
+
+# 4. Redis: cluster with shard
+Clone the repository and navigate to the Redis cluster directory:
+```bash
+git clone https://github.com/TuannHunggZ/Common-Stateful-Applications.git
+cd Common-Stateful-Applications/Redis/Cluster
+docker compose up -d
+```
+Create the Redis Cluster (Shard Setup)
+```bash
+docker exec -it redis-node1 redis-cli --cluster create \
+  172.30.0.2:6379 \
+  172.30.0.3:6379 \
+  172.30.0.4:6379 \
+  --cluster-replicas 0
+```
+Verify the Cluster
+- Access the Redis CLI on any node:
+```bash
+docker exec -it redis-node1 redis-cli
+```
+- Then run:
+```bash
+cluster nodes
+cluster info
+```
