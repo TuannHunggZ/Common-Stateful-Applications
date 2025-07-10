@@ -35,6 +35,11 @@ Access the mysql-slave container:
 ```bash
 docker exec -it mysql-slave mysql -u root -p
 ```
+Read data from Slave only:
+```bash
+SET GLOBAL read_only = ON;
+SET GLOBAL super_read_only = ON;
+```
 Run the following command, replacing the log file and position with the values from the master:
 ```bash
 CHANGE REPLICATION SOURCE TO
