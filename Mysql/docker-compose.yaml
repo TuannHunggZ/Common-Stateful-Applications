@@ -6,7 +6,7 @@ services:
     container_name: mysql-master
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_ROOT_PASSWORD: 123456789
     volumes:
       - master-data:/var/lib/mysql
       - ./init/master-init.sql:/docker-entrypoint-initdb.d/init.sql
@@ -22,7 +22,7 @@ services:
     container_name: mysql-slave
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_ROOT_PASSWORD: 123456789
     volumes:
       - slave-data:/var/lib/mysql
     ports:
