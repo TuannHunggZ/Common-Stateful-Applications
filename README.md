@@ -68,7 +68,7 @@ docker compose up -d
 Verify Redis Master and Slave Working
 - Access the Redis CLI inside a slave container:
 ```bash
-docker exec -it redis-slave1 redis-cli
+docker exec -it redis-slave redis-cli
 ```
 - Check replication status:
 ```bash
