@@ -92,3 +92,12 @@ docker exec -it redis-node1 redis-cli -c
 cluster nodes
 cluster info
 ```
+Add a new node to a running Redis Cluster (Optional)
+- Run the following command from redis-node1 or any container
+```bash
+docker exec -it redis-node1 redis-cli --cluster add-node 172.30.0.5:6379 172.30.0.2:6379
+```
+- Reshard data
+```bash
+docker exec -it redis-node1 redis-cli --cluster reshard 172.30.0.2:6379
+```
