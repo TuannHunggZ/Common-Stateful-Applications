@@ -1,10 +1,32 @@
 services:
+  web:
+    image: mongo-web
+    build: ./App
+    container_name: mongo-web
+    depends_on:
+      mongo1:
+        condition: service_healthy
+      mongo2:
+        condition: service_healthy
+      mongo3:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+    networks:
+      - mongoCluster
+
   mongo1:
     image: mongo
     container_name: mongo1
     ports:
       - "27018:27017"
     command: ["mongod", "--replSet", "myReplicaSet", "--bind_ip", "0.0.0.0"]
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+      start_period: 5s
     networks:
       - mongoCluster
 
@@ -14,6 +36,12 @@ services:
     ports:
       - "27019:27017"
     command: ["mongod", "--replSet", "myReplicaSet", "--bind_ip", "0.0.0.0"]
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+      start_period: 5s
     networks:
       - mongoCluster
 
@@ -23,18 +51,28 @@ services:
     ports:
       - "27010:27017"
     command: ["mongod", "--replSet", "myReplicaSet", "--bind_ip", "0.0.0.0"]
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+      start_period: 5s
     networks:
       - mongoCluster
 
   mongo-init:
     image: mongo
+    container_name: mongo_init
     depends_on:
-      - mongo1
-      - mongo2
-      - mongo3
+      mongo1:
+        condition: service_healthy
+      mongo2:
+        condition: service_healthy
+      mongo3:
+        condition: service_healthy
     volumes:
       - ./init-replica.js:/init-replica.js
-    entrypoint: ["sh", "-c", "sleep 5 && mongosh --host mongo1 --file /init-replica.js"]
+    entrypoint: ["sh", "-c", "mongosh --host mongo1 --file /init-replica.js"]
     networks:
       - mongoCluster
 
