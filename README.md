@@ -70,7 +70,7 @@ git clone https://github.com/TuannHunggZ/Common-Stateful-Applications.git
 cd Common-Stateful-Applications/Redis/Master-Slave
 docker compose up -d
 ```
-Verify Redis Master and Slave Working
+## Verify Redis Master and Slave Working
 - Access the Redis CLI inside a slave container:
 ```bash
 docker exec -it redis-slave redis-cli
@@ -78,6 +78,16 @@ docker exec -it redis-slave redis-cli
 - Check replication status:
 ```bash
 info replication
+```
+## Simulate Failover Using Sentinel
+- Stop redis master
+```bash
+docker stop redis-master
+```
+- Connect to a Sentinel to confirm
+```bash
+docker exec -it sentinel1 redis-cli -p 26379
+sentinel get-master-addr-by-name mymaster
 ```
 
 # 4. Redis: cluster with shard

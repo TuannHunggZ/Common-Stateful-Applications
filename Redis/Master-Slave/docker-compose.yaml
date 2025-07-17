@@ -5,18 +5,131 @@ services:
     restart: always
     volumes:
       - redis_master:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
     ports:
       - 6379:6379
+    networks:
+      redis-net:
+        ipv4_address: 172.50.0.10
 
-  redis-slave:
+  redis-slave1:
     image: redis:8.0.2-alpine
-    container_name: redis-slave
+    container_name: redis-slave1
     restart: always
     volumes:
-      - redis_slave:/data
+      - redis_slave1:/data
     ports:
       - 6380:6379
+    depends_on:
+      redis-master:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
     command: redis-server --slaveof redis-master 6379
+    networks:
+      redis-net:
+        ipv4_address: 172.50.0.11
+
+  redis-slave2:
+    image: redis:8.0.2-alpine
+    container_name: redis-slave2
+    restart: always
+    volumes:
+      - redis_slave2:/data
+    ports:
+      - 6381:6379
+    depends_on:
+      redis-master:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    command: redis-server --slaveof redis-master 6379
+    networks:
+      redis-net:
+        ipv4_address: 172.50.0.12
+
+  redis-sentinel1:
+    image: bitnami/redis-sentinel
+    container_name: redis-sentinel1
+    ports:
+      - '26379:26379'
+    environment:
+      - REDIS_MASTER_HOST=172.50.0.10
+      - REDIS_MASTER_PORT_NUMBER=6379
+      - REDIS_SENTINEL_PORT_NUMBER=26379
+    depends_on:
+      redis-master:
+        condition: service_healthy
+      redis-slave1:
+        condition: service_healthy
+      redis-slave2:
+        condition: service_healthy
+    networks:
+      redis-net:
+        ipv4_address: 172.50.0.13
+
+  redis-sentinel2:
+    image: bitnami/redis-sentinel
+    container_name: redis-sentinel2
+    ports:
+      - '26380:26379'
+    environment:
+      - REDIS_MASTER_HOST=172.50.0.10
+      - REDIS_MASTER_PORT_NUMBER=6379
+      - REDIS_SENTINEL_PORT_NUMBER=26380
+    depends_on:
+      redis-master:
+        condition: service_healthy
+      redis-slave1:
+        condition: service_healthy
+      redis-slave2:
+        condition: service_healthy
+    networks:
+      redis-net:
+        ipv4_address: 172.50.0.14 
+
+  redis-sentinel3:
+    image: bitnami/redis-sentinel
+    container_name: redis-sentinel3
+    ports:
+      - '26381:26379'
+    environment:
+      - REDIS_MASTER_HOST=172.50.0.10
+      - REDIS_MASTER_PORT_NUMBER=6379
+      - REDIS_SENTINEL_PORT_NUMBER=26381
+    depends_on:
+      redis-master:
+        condition: service_healthy
+      redis-slave1:
+        condition: service_healthy
+      redis-slave2:
+        condition: service_healthy
+    networks:
+      redis-net:
+        ipv4_address: 172.50.0.15
+
 volumes:
   redis_master:
-  redis_slave:
+  redis_slave1:
+  redis_slave2:
+
+networks:
+  redis-net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.50.0.0/24
