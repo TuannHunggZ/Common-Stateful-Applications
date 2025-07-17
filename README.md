@@ -12,6 +12,7 @@ Check the replica set status:
 ```bash
 rs.status()
 ```
+Check connection via web [`http://localhost:3000`](http://localhost:3000)
 # 2. Mysql: master and slave
 ```bash
 git clone https://github.com/TuannHunggZ/Common-Stateful-Applications.git
@@ -57,6 +58,10 @@ Verify the replication status:
 ```bash
 SHOW REPLICA STATUS\G
 ```
+## Check connection via web 
+Access [`http://localhost:8080`](http://localhost:8080)
+## 📌 Ghi chú
+MySQL replication needs to be configured before running the web.
 
 # 3. Redis: master and slave
 Clone the repository and navigate to the Redis master-slave directory:
